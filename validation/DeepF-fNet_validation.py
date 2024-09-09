@@ -51,7 +51,7 @@ geom_val = tf.sqrt(sigma2_B_geomFEM[randData:randData+1,:] + e)*geomn + mu_B_geo
 r = geom_val[0,0] #[m] mean radius of tri-chiral honeycomb circle
 L = geom_val[0,1] #[m] ligament length of tri-chiral honeycomb
 s = geom_val[0,2] #[m] wall thickness of tri-chiral honeycomb
-print(f'\nIEPS validation\nr -> ground truth: {r_true*1e3:.4f} mm  predicted: {r*1e3:.4f}\nL -> ground truth: {L_true*1e3:.4f} mm  predicted: {L*1e3:.4f} mm\ns -> ground truth: {s_true:.4f} mm  predicted: {s:.4f} mm')
+print(f'\nIEPS validation\nr -> ground truth: {r_true*1e3:.4f} mm  predicted: {r*1e3:.4f} mm\nL -> ground truth: {L_true*1e3:.4f} mm  predicted: {L*1e3:.4f} mm\ns -> ground truth: {s_true:.4f} mm  predicted: {s:.4f} mm')
 
 # Construction of the abscissa axis, i.e. predicted wave number range
 n_discr_k = 40 # number of discrete points of division of the wave number range
@@ -95,6 +95,7 @@ w_ALR_true = tf.expand_dims(w_ALR_true,0) # manipulate to build Coord
 w_ALR_true = tf.expand_dims(w_ALR_true,1) # manipulate to build Coord
 h_ALR_true = tf.expand_dims(h_ALR_true,0) # manipulate to build Coord
 h_ALR_true = tf.expand_dims(h_ALR_true,1) # manipulate to build Coord
+w_HS_true = tf.expand_dims(w_HS_true,0) # manipulate to build Coord
 w_HS_true = tf.expand_dims(w_HS_true,1) # manipulate to build Coord
 h_HS = tf.expand_dims(h_HS,1) # manipulate to build Coord
 Coord = tf.concat([tf.expand_dims(tf.concat([-w_HS_true/2,tf.zeros([1,1],dtype=tf.float32)],1),1), # creation of the 51 physical nodes of the LRM
