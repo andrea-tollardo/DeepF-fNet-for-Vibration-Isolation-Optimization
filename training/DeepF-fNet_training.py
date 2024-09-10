@@ -290,21 +290,23 @@ def PDE_calculator(x_n, y_n, nu_s, rho_s, E_s, omega2, PDE_model, mu_B_uFEM, sig
     
     # ALR domain
     w1_re = tf.concat([tf.expand_dims(u_re[:,:N_coord_threshold*dim_n*dim_k],1),tf.expand_dims(v_re[:,:N_coord_threshold*dim_n*dim_k],1)], axis=1) # column vector of predicted displacements u and v, real part 
+    w1_im = tf.concat([tf.expand_dims(u_im[:,:N_coord_threshold*dim_n*dim_k],1),tf.expand_dims(v_im[:,:N_coord_threshold*dim_n*dim_k],1)], axis=1) # column vector of predicted displacements u and v, imaginary part 
     div_sigma_ALR_re = tf.concat([divS_1_ALR_re[:,:,:N_coord_threshold*dim_n*dim_k],divS_2_ALR_re[:,:,:N_coord_threshold*dim_n*dim_k]], axis=1) # column vector of divergence of stress tensor, real part
     div_sigma_ALR_im = tf.concat([divS_1_ALR_im[:,:,:N_coord_threshold*dim_n*dim_k],divS_2_ALR_im[:,:,:N_coord_threshold*dim_n*dim_k]], axis=1) # column vector of divergence of stress tensor, imaginary part
     # Construction of the inertial term
     inertia_ALR_re = tf.tile(tf.expand_dims(rho_ALR_pred,1),[1,2,N_coord_threshold*dim_n*dim_k])*omega2[:,:,:N_coord_threshold*dim_n*dim_k]*w1_re # column vector of inertial term, real part. Density is the same in both directions
-    inertia_ALR_im = tf.zeros_like(inertia_ALR_re,dtype=tf.float32) # being density only real, imaginary part of inertial term is null
+    inertia_ALR_im = tf.tile(tf.expand_dims(rho_ALR_pred,1),[1,2,N_coord_threshold*dim_n*dim_k])*omega2[:,:,:N_coord_threshold*dim_n*dim_k]*w1_im # column vector of inertial term, imaginary part. Density is the same in both directions
     # ALR residual for each set of coordinate (including n and k)
     res_ALR = tf.reduce_mean(keras.losses.mean_squared_error(inertia_ALR_re + div_sigma_ALR_re + inertia_ALR_im + div_sigma_ALR_im,0.0),axis=0) # mean squared error computed along the batch dimension. Sign convention of Comsol Eigenfrequency Study
 
     # HS domain
-    w2_re = tf.concat([tf.expand_dims(u_re[:,N_coord_threshold*dim_n*dim_k:],1),tf.expand_dims(v_re[:,N_coord_threshold*dim_n*dim_k:],1)], axis=1) # column vector of predicted displacements u and v, real part # row vector
+    w2_re = tf.concat([tf.expand_dims(u_re[:,N_coord_threshold*dim_n*dim_k:],1),tf.expand_dims(v_re[:,N_coord_threshold*dim_n*dim_k:],1)], axis=1) # column vector of predicted displacements u and v, real part
+    w2_im = tf.concat([tf.expand_dims(u_im[:,N_coord_threshold*dim_n*dim_k:],1),tf.expand_dims(v_im[:,N_coord_threshold*dim_n*dim_k:],1)], axis=1) # column vector of predicted displacements u and v, imaginary part
     div_sigma_HS_re = tf.concat([divS_1_HS_re[:,:,N_coord_threshold*dim_n*dim_k:],divS_2_HS_re[:,:,N_coord_threshold*dim_n*dim_k:]], axis=1) # column vector of divergence of stress tensor, real part
     div_sigma_HS_im = tf.concat([divS_1_HS_im[:,:,N_coord_threshold*dim_n*dim_k:],divS_2_HS_im[:,:,N_coord_threshold*dim_n*dim_k:]], axis=1) # column vector of divergence of stress tensor, imaginary part
     # Construction of the inertial term
     inertia_HS_re = rho_steel*omega2[:,:,N_coord_threshold*dim_n*dim_k:]*w2_re # column vector of inertial term, real part. Density is the same in both directions and every batch
-    inertia_HS_im = tf.zeros_like(inertia_HS_re) # being density only real, imaginary part of inertial term is null
+    inertia_HS_im = rho_steel*omega2[:,:,N_coord_threshold*dim_n*dim_k:]*w2_im # column vector of inertial term, imaginary part. Density is the same in both directions and every batch
     # HS residual for each set of coordinate (including n and k)
     res_HS = tf.reduce_mean(keras.losses.mean_squared_error(inertia_HS_re + div_sigma_HS_re + inertia_HS_im + div_sigma_HS_im,0.0),axis=0) # mean squared error computed along the batch dimension. Sign convention of Comsol Eigenfrequency Study
     
