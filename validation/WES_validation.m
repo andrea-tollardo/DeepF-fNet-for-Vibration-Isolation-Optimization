@@ -125,12 +125,12 @@ u_Re_WES = load("uv_val.mat","uRe"); %[m] horizontal displacement - real part
 u_Im_WES = load("uv_val.mat","uIm"); %[m] horizontal displacement - imaginary part
 v_Re_WES = load("uv_val.mat","vRe"); %[m] vertical displacement - real part
 v_Im_WES = load("uv_val.mat","vIm"); %[m] vertical displacement - imaginary part
-comp_WES = [u_Re_WES.uRe,u_Im_WES.uIm,v_Re_WES.vRe,v_Im_WES.vIm] % list of predicted eigenvector components
+comp_WES = [u_Re_WES.uRe',u_Im_WES.uIm',v_Re_WES.vRe',v_Im_WES.vIm']; % list of predicted eigenvector components
 
 % Plot predicted displacement field
-Q2 = scatteredInterpolant(Coord(1:21,1),Coord(1:21,2),comp_WES(N*K+(1-1)*400:400:N*K+(21-1)*400,p)'); % interpolate HS displacement field
+Q2 = scatteredInterpolant(Coord(1:21,1),Coord(1:21,2),comp_WES(N*K+(1-1)*400:400:N*K+(21-1)*400,p)); % interpolate HS displacement field
 Q2.Method = 'linear';
-Q1 = scatteredInterpolant(Coord([16,17,18,19,20,22:end],1),Coord([16,17,18,19,20,22:end],2),comp_WES([N*K+(16-1)*400,N*K+(17-1)*400,N*K+(18-1)*400,N*K+(19-1)*400,N*K+(20-1)*400,N*K+(22-1)*400:400:N*K+(51-1)*400],p)'); % interpolate ALR displacement field
+Q1 = scatteredInterpolant(Coord([16,17,18,19,20,22:end],1),Coord([16,17,18,19,20,22:end],2),comp_WES([N*K+(16-1)*400,N*K+(17-1)*400,N*K+(18-1)*400,N*K+(19-1)*400,N*K+(20-1)*400,N*K+(22-1)*400:400:N*K+(51-1)*400],p)); % interpolate ALR displacement field
 Q1.Method = 'linear';
 z1WES = Q1(X1,Y1); % ALR displacement field
 figure(2);
